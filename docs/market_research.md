@@ -2,7 +2,7 @@
 
 **Project:** AI Document Knowledge Assistant & Q&A App
 **Author:** Bushra Ashraf, Khadija Malik
-**Date:** 18 October 2026
+**Date:** 12 October 2026
 
 ---
 

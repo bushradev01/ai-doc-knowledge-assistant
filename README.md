@@ -18,7 +18,7 @@ Python, LangChain, OpenAI API, FAISS, Streamlit
 - `src/` code
 
 ## Links
-- Project master sheet: (add later)
+- Project master sheet: https://docs.google.com/spreadsheets/d/1orztmFp4pMQ89cbd1EQpyS8GUpTHMXOBTvOjyY3AF3c/edit?usp=sharing
 
 ## Team
 - Bushra Ashraf 
