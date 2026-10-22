@@ -37,6 +37,32 @@ Python, LangChain, OpenAI API, FAISS, Streamlit
 - [Feedback Log](docs/feedback.md)
 - Code: `src/ingest.py`, `src/qa.py`, `src/run_tests.py`
 
+## Week 3 Deliverables
+- [Pilot Execution Data](docs/pilot_execution_data.md) ([Run 1](docs/pilot_run1.md), [Run 2](docs/pilot_run2.md))
+- [SLA & QA Checklist](docs/sla_checklist.md)
+- Integrated app: `src/app.py` (Streamlit + FAISS + Ollama)
+- Pilot script: `src/run_pilot.py`
+
+## Run the App
+    streamlit run src/app.py
+
+## Week 3 Results
+| Measure | Result |
+|---|---|
+| Pilot accuracy (30 questions) | 83% before, 87% after changes |
+| Live accuracy (9 new questions) | 67% |
+| Average response time | under 1 second |
+| Refusal of out-of-scope questions | 60% pilot (target 90%, planned for Week 4) |
+
+
+(check test images)
+
+
+## Run the App
+```
+streamlit run src/app.py
+```
+
 ## How to Run
 1. Create a virtual environment and run `pip install -r requirements.txt`
 2. Install Ollama, then run `ollama pull nomic-embed-text` and `ollama pull qwen2.5:0.5b`

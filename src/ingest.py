@@ -4,7 +4,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_community.vectorstores import FAISS
 
 load_dotenv()
@@ -17,7 +17,6 @@ PROVIDER = os.getenv("PROVIDER", "openai").lower()
 
 
 def get_embeddings():
-    """Return the embedding model for the chosen provider."""
     if PROVIDER == "ollama":
         from langchain_ollama import OllamaEmbeddings
         return OllamaEmbeddings(model="nomic-embed-text")
@@ -27,23 +26,30 @@ def get_embeddings():
 
 def main():
     print(f"Provider: {PROVIDER}")
+    splitter = MarkdownHeaderTextSplitter(
+        headers_to_split_on=[("#", "title"), ("##", "section")]
+    )
 
-    # 1. Load every markdown file
-    docs = []
+    chunks = []
     for path in sorted(DATA_DIR.glob("*.md")):
         text = path.read_text(encoding="utf-8")
-        docs.append(Document(page_content=text, metadata={"source": path.name}))
-    if not docs:
-        print("No .md files found in the data folder.")
+        for part in splitter.split_text(text):
+            title = part.metadata.get("title", "")
+            section = part.metadata.get("section", "")
+            if not section:
+                continue  # skip the bare title line
+            # Put the heading into the text so search knows the context
+            content = f"{title} - {section}\n{part.page_content}"
+            chunks.append(Document(
+                page_content=content,
+                metadata={"source": path.name, "section": section},
+            ))
+
+    if not chunks:
+        print("No chunks created. Check the data folder.")
         return
-    print(f"Loaded {len(docs)} documents")
+    print(f"Created {len(chunks)} chunks from {len(list(DATA_DIR.glob('*.md')))} files")
 
-    # 2. Split into chunks (file name is kept as the source)
-    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    chunks = splitter.split_documents(docs)
-    print(f"Created {len(chunks)} chunks")
-
-    # 3. Embed and save the index (old index is replaced)
     if INDEX_DIR.exists():
         shutil.rmtree(INDEX_DIR)
     db = FAISS.from_documents(chunks, get_embeddings())
